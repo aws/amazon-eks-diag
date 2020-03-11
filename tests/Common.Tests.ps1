@@ -1,19 +1,19 @@
-<#
-.DESCRIPTION Common Pester unit tests for the repository
-
-.NOTES
 # Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License").
 # You may not use this file except in compliance with the License.
 # A copy of the License is located at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
-# or in the "license" file accompanying this file. This file is distributed 
-# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-# express or implied. See the License for the specific language governing 
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
+
+<#
+Pester test file intended to run as a part of testing code changes.
+Not intended to run as a part of the diagnostic tool's execution.
 #>
 $moduleName = 'amazon-eks-diag'
 Write-Host ('Reloading module: {0}' -f $moduleName)
@@ -31,7 +31,7 @@ Describe "$moduleName Module Structure" {
     $publicFunctionFiles = Get-ChildItem -Path "$functionDir\public\*" -Include *.ps1 -Exclude *.tests.ps1 -Recurse
     $privateFunctionFiles = Get-ChildItem -Path "$functionDir\private\*" -Include *.ps1 -Exclude *.tests.ps1 -Recurse
     $testDir = [System.IO.Path]::Combine($moduleDir, 'Tests')
-    
+
     Context "Module Manifest Checks" {
         It "has a valid manifest (psd1)" {
             { Test-ModuleManifest -Path $moduleManifest } | Should Not Throw

@@ -3,18 +3,43 @@
 # Licensed under the Apache License, Version 2.0 (the "License").
 # You may not use this file except in compliance with the License.
 # A copy of the License is located at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
-# or in the "license" file accompanying this file. This file is distributed 
-# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-# express or implied. See the License for the specific language governing 
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
+
 Function Start-EKSDiag {
+    <#
+    .DESCRIPTION A function to help Amazon EKS users gather diagnostic
+    information from their Amazon EC2 Windows worker nodes.
+
+    .SYNOPSIS Gathers an archives diagnostic logs and information related
+    to the local EKS Windows worker node. Gathers the local diagnostic
+    information for this node only, and compresses the information into an
+    archive. For security, the archive is left on the local file system for
+    the system administrator to choose an apropriate mechanism for retrieving
+    the archive.
+
+    .PARAMETER Guid
+    A unique string used to tag the resulting diagnostic information. Defaults
+    to a date-based string using the format 'yyyyMMdd_HHmmss'
+
+    .PARAMETER Path
+    The location where diagnostic information should be stored. Defaults
+    to a directory under $ENV:Temp named with a prefix of 'EKSDiag_' and a
+    suffix of $Guid
+
+    .PARAMETER LogLevel
+    The verbosity of the diagnostic information gathered represented as an [int]
+    between 1-5. Defaults to 1
+    #>
     [CmdletBinding()]
     Param (
         [ValidateNotNullOrEmpty()]
-        [Parameter(Mandatory = $false)]    
+        [Parameter(Mandatory = $false)]
         [string]$Guid = $(Get-Date -Format 'yyyyMMdd_HHmmss'),
 
         [ValidateNotNullOrEmpty()]
@@ -22,13 +47,13 @@ Function Start-EKSDiag {
         [string]$Path = [System.IO.Path]::Combine($ENV:Temp, "EKSDiag_$Guid"),
 
         [Parameter(Mandatory = $false)]
-        [ValidateRange(1,5)]
+        [ValidateRange(1, 5)]
         [int]$LogLevel = 1
     )
     Begin {
         Set-StrictMode -Version latest
         $ErrorActionPreference = 'Continue'
-        
+
         ########################################################################
         # Setup Logging & Globals
         ########################################################################
@@ -71,22 +96,22 @@ Function Start-EKSDiag {
         # File Based Components
         ########################################################################
         [hashtable]$fileComponents = @{
-            EKSLogs = @{
-                LogDir      = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'EKS', 'logs')
-                LogTypes    = @('*.log')
+            EKSLogs       = @{
+                LogDir   = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'EKS', 'logs')
+                LogTypes = @('*.log')
             }
             EC2LaunchLogs = @{
-                LogDir      = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'EC2-Windows')
-                LogTypes    = @('*.log')
+                LogDir   = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'EC2-Windows')
+                LogTypes = @('*.log')
             }
-            SSMLogs = @{
-                LogDir      = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'SSM')
-                LogTypes    = @('*.log')
-                Exclude     = @('ipcTempFile.log')
+            SSMLogs       = @{
+                LogDir   = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'SSM')
+                LogTypes = @('*.log')
+                Exclude  = @('ipcTempFile.log')
             }
-            CNIConfig = @{
-                LogDir      = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'EKS', 'cni')
-                LogTypes    = @('*.conf')
+            CNIConfig     = @{
+                LogDir   = [System.IO.Path]::Combine($ENV:ProgramData, 'Amazon', 'EKS', 'cni')
+                LogTypes = @('*.conf')
             }
         }
         Write-Log 'Gathering Logs'
@@ -103,7 +128,7 @@ Function Start-EKSDiag {
         ########################################################################
         # Commandlet Based Components
         ########################################################################
-        
+
         [hashtable]$cmdletComponents = @{
             'Get-NetAdapter'    = @(
                 @{
@@ -133,30 +158,30 @@ Function Start-EKSDiag {
             'Get-ScheduledTask' = @(
                 @{
                     TaskName = '*EKS*'
-                    Verbose = [switch]::Present
+                    Verbose  = [switch]::Present
                 }
             )
-            'Get-EventLog' = @(
+            'Get-EventLog'      = @(
                 @{
                     LogName = 'EKS'
                     Verbose = [switch]::Present
                 }
             )
-            'Get-Service' = @(
+            'Get-Service'       = @(
                 @{
-                    Name = 'kubelet'
+                    Name    = 'kubelet'
                     Verbose = [switch]::Present
                 },
                 @{
-                    Name = 'kube-proxy'
+                    Name    = 'kube-proxy'
                     Verbose = [switch]::Present
                 },
                 @{
-                    Name = 'docker'
+                    Name    = 'docker'
                     Verbose = [switch]::Present
                 },
                 @{
-                    Name = 'AmazonSSMAgent'
+                    Name    = 'AmazonSSMAgent'
                     Verbose = [switch]::Present
                 }
             )
@@ -177,9 +202,9 @@ Function Start-EKSDiag {
         ########################################################################
         # Exe Based Components
         ########################################################################
-        
+
         [hashtable]$exeComponents = @{
-            'docker.exe'    = @(
+            'docker.exe' = @(
                 'ps -a',
                 'images -a',
                 'network ls'
@@ -196,7 +221,7 @@ Function Start-EKSDiag {
             Write-Log ('[{0}] Completed gethering exe component data' -f $exe)
         }
         Write-Log 'Completed gathering exe component data'
-        
+
         ########################################################################
         # Tests
         ########################################################################
