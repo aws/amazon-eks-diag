@@ -207,13 +207,14 @@ Function Start-EKSDiag {
         ########################################################################
 
         [hashtable]$exeComponents = @{
-            'docker.exe' = @(
+            'docker.exe'                = @(
                 'ps -a',
                 'images -a',
                 'network ls'
             )
             'aws-iam-authenticator.exe' = @('version')
-            'kubelet' = @('--version')
+            'kubelet'                   = @('--version')
+            'kube-proxy'                = @('--version')
         }
         Write-Log 'Gathering exe component data'
         Foreach ($exe in $exeComponents.GetEnumerator().Name) {
