@@ -82,6 +82,9 @@ Function Start-EKSDiag {
         # Prereqs
         ########################################################################
 
+        # Add EKS to the path for referencing aws-iam-authenticator.exe
+        $ENV:Path += ";$ENV:ProgramFiles/Amazon/EKS"
+
         # Pester
         [version]$REQUIRED_PESTER_VERSION = '4.10.1'
         Remove-Module -Name Pester -Force -ErrorAction:SilentlyContinue
@@ -209,6 +212,8 @@ Function Start-EKSDiag {
                 'images -a',
                 'network ls'
             )
+            'aws-iam-authenticator.exe' = @('version')
+            'kubelet' = @('--version')
         }
         Write-Log 'Gathering exe component data'
         Foreach ($exe in $exeComponents.GetEnumerator().Name) {
