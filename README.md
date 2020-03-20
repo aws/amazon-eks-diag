@@ -42,6 +42,9 @@ Following is a categorical overview of the diagnostic information gathered by th
     * docker ps -a
     * docker images -a
     * docker network ls
+    * aws-iam-authenticator version
+    * kubelet --version
+    * kube-proxy --version
 4. Pester test output from the tests stored within the local module
     * amazon-eks-diag.hns.tests.ps1
     * amazon-eks-diag.kubeproxy.tests.ps1

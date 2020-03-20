@@ -38,7 +38,7 @@ Function Get-EKSDiagExeData {
     $ErrorActionPreference = 'Continue'
     Out-File -InputObject "`n$((Get-Location).Path)> $command`n" -FilePath $Path -Append
     try {
-        Invoke-Expression -Command $Command | Out-File -FilePath $Path -Append
+        Invoke-Expression -Command $Command *>>$Path 2>>"$Path.exception.log"
     }
     catch {
         $_.Exception.Message | Tee-Object -FilePath "$Path.exception.log" -Append | Write-Log -IsError
