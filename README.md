@@ -1,6 +1,6 @@
 # amazon-eks-diag
 
-`amazon-eks-diag` is a PowerShell module to help Amazon EKS users gather diagnostic information from their Amazon EC2 Windows worker nodes. The module is executed in a local PowerShell session on each worker node. The module will gather the local diagnostic information for this node only, and compresses the information into an archive. For security, the archive is left on the local file system for the system administrator to choose an apropriate mechanism for retrieving the archive.
+`amazon-eks-diag` is a PowerShell module to help Amazon EKS users gather diagnostic information from their Amazon EC2 Windows worker nodes. The module is executed in a local PowerShell session on each worker node. The module will gather the local diagnostic information for this node only, and compresses the information into an archive. For security, the archive is left on the local file system for the system administrator to choose an appropriate mechanism for retrieving the archive.
 
 ## Usage
 The module needs to be run on an EC2 Windows worker node. There are many ways of distributing the module to a node. The most straight forward is using the AWS.Tools.S3 SDK to upload the module to S3, and then download it on the node. Example:
@@ -25,7 +25,7 @@ Following is a categorical overview of the diagnostic information gathered by th
     * $ENV:ProgramData\Amazon\EKS\logs\\**\\*.log
     * $ENV:ProgramData\Amazon\EKS\cni\\**\\*.config
     * $ENV:ProgramData\Amazon\EC2-Windows\\**\\*.log
-    * $ENV:ProgramData\Amazon\SSM\\**\\*.log `(Excluding ipcTempFeil.log from SSM Session Manager)`
+    * $ENV:ProgramData\Amazon\SSM\\**\\*.log `(Excluding ipcTempFile.log from SSM Session Manager)`
 2. Related PowerShell objects serialized into JSON
     * Get-NetAdapter
     * Get-NetRoute
