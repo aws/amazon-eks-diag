@@ -36,12 +36,12 @@ Following is a categorical overview of the diagnostic information gathered by th
     * Get-EventLog -LogName 'EKS'
     * Get-Service -Name 'kubelet'
     * Get-Service -Name 'kube-proxy'
-    * Get-Service -Name 'docker'
+    * Get-Service -Name 'containerd'
     * Get-Service -Name 'AmazonSSMAgent'
 3. Related executable output
-    * docker ps -a
-    * docker images -a
-    * docker network ls
+    * ctr.exe -n "k8s.io" containers list
+    * ctr.exe -n "k8s.io" images list
+    * ctr.exe -n "k8s.io" events
     * aws-iam-authenticator version
     * kubelet --version
     * kube-proxy --version

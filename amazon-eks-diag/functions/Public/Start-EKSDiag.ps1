@@ -180,7 +180,7 @@ Function Start-EKSDiag {
                     Verbose = [switch]::Present
                 },
                 @{
-                    Name    = 'docker'
+                    Name    = 'containerd'
                     Verbose = [switch]::Present
                 },
                 @{
@@ -207,10 +207,10 @@ Function Start-EKSDiag {
         ########################################################################
 
         [hashtable]$exeComponents = @{
-            'docker.exe'                = @(
-                'ps -a',
-                'images -a',
-                'network ls'
+            'ctr.exe'                = @(
+                '-n "k8s.io" containers list',
+                '-n "k8s.io" images list',
+                '-n "k8s.io" events'
             )
             'aws-iam-authenticator.exe' = @('version')
             'kubelet'                   = @('--version')
